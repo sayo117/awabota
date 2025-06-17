@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>紹介者コード記録中...</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { 
+      font-family: sans-serif; 
+      text-align: center; 
+      padding: 50px 20px; 
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh; 
+      box-sizing: border-box; 
+    }
+    h1 {
+      font-size: 1.5em; 
+      margin-bottom: 20px;
+    }
+    #status { 
+      margin-top: 20px; 
+      font-size: 1.2em; 
+      color: #06c755; 
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>LINEに登録する前に、紹介コードを記録中...</h1>
+  <p id="status">送信しています...</p>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const ref = params.get("ref") || "unknown";
+
+    // ====== あなたの情報に置き換え済みです ======
+    // あなたの最新のGASデプロイURL
+    const googleAppsScriptUrl = "https://script.google.com/macros/s/AKfycby3u6Xb3-zebIdonoBuBAi8v4mp9e1TDGYNzIsND7M7-dL0qoC5TS5M6HwZykx7ETcd/exec"; 
+    
+    // あなたのLINE公式アカウントの基本URL（変更があればここだけ手動で直してください）
+    const lineOfficialUrl = "https://lin.ee/4iqGHZw"; 
+    // ======================================
+
+    fetch(googleAppsScriptUrl + "?ref=" + ref)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('GASからのエラーレスポンス');
+        }
+        return response.text();
+      })
+      .then(data => {
+        if (data.trim() === "Success") {
+            document.getElementById("status").textContent = "✅ 記録完了！LINEに移動します...";
+            setTimeout(() => {
+              window.location.href = lineOfficialUrl; 
+            }, 1500); 
+        } else {
+            document.getElementById("status").textContent = `⚠️ 記録に失敗しました: ${data} 再読み込みしてください。`;
+        }
+      })
+      .catch(error => {
+        console.error('Fetch error:', error);
+        document.getElementById("status").textContent = `⚠️ 記録に失敗しました。エラー: ${error.message} 再読み込みしてください。`;
+      });
+  </script>
+</body>
+</html>
